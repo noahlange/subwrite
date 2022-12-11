@@ -6,6 +6,12 @@
   "module": "./lib/subwriter.mjs",
   "main": "./lib/subwriter.js",
   "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/subwriter.mjs",
+      "require": "./lib/subwriter.js"
+    }
+  },
   "scripts": {
     "dev": "npm-run-all \"dev:*\" \"test\"",
     "build": "npm-run-all \"build:*\"",
