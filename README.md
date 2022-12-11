@@ -1,8 +1,8 @@
-# subwrite
+# subwriter
 
-A tiny (~2kb), writer-first, minimally-invasive DSL for token substitution in long-form text. You can think of it as a presentation layer for writers working with randomly-generated data. **Subwrite** strictly separates the text from the content generation process. By way of constrast, [Tracery](https://github.com/galaxykate/tracery) hybridizes the two.
+A tiny (~2kb), writer-first, minimally-invasive DSL for token substitution in long-form text. You can think of it as a presentation layer for writers working with randomly-generated data. **subwriter** strictly separates the text from the content generation process. By way of constrast, [Tracery](https://github.com/galaxykate/tracery) hybridizes the two.
 
-**Subwrite** is designed to be as minimal as possible, and reserves only 5 characters (`[ { | } ]`), with 1 additional character (`=`) reserved within filter declarations. Anything else is fair game as content or as an identifier.
+**subwriter** is designed to be as minimal as possible, and reserves only 5 characters (`[ { | } ]`), with 1 additional character (`=`) reserved within filter declarations. Anything else is fair game as content or as an identifier.
 
 Including emojis, because why not.
 
@@ -69,7 +69,7 @@ Property access, filters, &c., are evaluated left to right.
 5. When in doubt, _use a filter_.
 
 ```js
-import { sub } from 'subwrite';
+import { sub } from 'subwriter';
 
 // properties -> "His name is Bob."
 sub(`His name is {name}.`, { name: 'Bob' });
@@ -138,7 +138,7 @@ Some sample text using Wildermyth's text interpolation DSL.
 <leader.mf:He/She> wipes a fleck of bluish ooze off <leader.mf:his/her> nose.
 ```
 
-And the equivalent using Subwrite and emojis.
+And the equivalent using **subwriter** and emojis.
 
 ```
 {🫡} takes a long, appraising look at {😡}.
@@ -157,7 +157,7 @@ Which resolves to:
 
 > Ahem. Our foes appear to have arrived.
 
-And the corresponding Subwrite source, which resolves to the same text (after trimming).
+And the corresponding **subwriter** source, which resolves to the same text (after trimming).
 
 ```
 [Surprise, everyone! It's fightin' time!|leader=🤪]
