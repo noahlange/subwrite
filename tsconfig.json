@@ -8,6 +8,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "lib",
+    "declaration": true,
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "skipLibCheck": true,
@@ -15,13 +16,13 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "emitDeclarationOnly": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "importsNotUsedAsValues": "error",
-    "isolatedModules": true,
-    "noEmit": true
+    "isolatedModules": true
   },
   "exclude": [".ignore"]
 }

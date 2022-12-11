@@ -1,13 +1,17 @@
 {
   "name": "subwrite",
   "version": "0.1.0",
+  "repository": "github:noahlange/subwrite",
+  "author": "Noah Lange <noahrlange@gmail.com>",
   "module": "lib/subwrite.mjs",
   "main": "lib/subwrite.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "dev": "npm-run-all \"dev:*\" \"test\"",
     "build": "npm-run-all \"build:*\"",
     "build:esm": "esbuild src/index.ts --minify --bundle --outfile=lib/subwrite.mjs --format=esm",
     "build:cjs": "esbuild src/index.ts --minify --bundle --outfile=lib/subwrite.js --format=cjs",
+    "build:types": "tsc",
     "dev:pretty": "prettier --write 'src/**/*.{ts,tsx}'",
     "dev:types": "tsc --noEmit",
     "test": "jest"
@@ -20,5 +24,8 @@
     "ts-jest": "^28.0.7",
     "typescript": "^4.9.3",
     "npm-run-all": "^4.1.5"
-  }
+  },
+  "files": [
+    "/lib"
+  ]
 }
