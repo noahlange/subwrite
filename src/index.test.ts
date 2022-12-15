@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { sub, subThrows } from './index';
+import sub from './index';
 
 class Person {
   public gender = 'M';
@@ -160,8 +160,8 @@ describe('groups', () => {
     const LEADER = '🤓';
     const ctx = {
       before: `[
-        [Surprise everyone! It's fightin' time!|leader=🤪]
-        [Ahem. Our foes appear to have arrived.|leader=🤓]
+        [Surprise everyone! It's fightin' time!|leader="🤪"]
+        [Ahem. Our foes appear to have arrived.|leader="🤓"]
         |trim
       ]`,
       after: `Ahem. Our foes appear to have arrived.`,
@@ -190,11 +190,11 @@ describe('emojis', () => {
           after: 'He wipes a fleck of bluish ooze off his nose.'
         },
         {
-          before: "[Surprise everyone! It's fightin' time!|leader=🙂]",
+          before: '[Surprise everyone! It\'s fightin\' time!|leader="🙂"]',
           after: ''
         },
         {
-          before: '[Ahem. Our foes appear to have arrived.|leader=🤓]',
+          before: '[Ahem. Our foes appear to have arrived.|leader="🤓"]',
           after: 'Ahem. Our foes appear to have arrived.'
         }
       ],
@@ -247,6 +247,20 @@ describe('emojis', () => {
       "Isn't that Sally? Is she a superhero?"
     );
   });
+
+  test('params referencing data use the corresponding value', () => {
+    const data = { '#': 10 };
+    const ctx = {
+      s: (text: string, count: number) => (count === 1 ? text : text + 's')
+    };
+
+    const text = {
+      before: '{#} [bottle|s=#] of beer on the wall.',
+      after: '10 bottles of beer on the wall.'
+    };
+
+    expect(sub(text.before, data, ctx)).toBe(text.after);
+  });
 });
 
 describe('errors', () => {
@@ -259,6 +273,6 @@ describe('errors', () => {
   });
 
   test('subThrow throws on error.', () => {
-    expect(() => subThrows('|||')).toThrow();
+    expect(() => sub.throwable('|||')).toThrow();
   });
 });

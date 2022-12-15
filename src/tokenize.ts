@@ -21,25 +21,20 @@ const characters: Record<string, TokenType> = {
 };
 
 export function tokenize(input: string): Token[] {
-  function appendText(value: string, tokens: Token[]): [string, Token[]] {
-    // skip whitespace-only nodes
-    return value.trim()
-      ? // ...but don't trim regular ones
-        ['', tokens.concat({ type: TOKEN.LITERAL, value })]
-      : [value, tokens];
-  }
-
   // use Intl's Segmenter to avoid UTF problems
   let [value, tokens]: [string, Token[]] = ['', []];
   for (const segment of segmentize(input)) {
     if (segment in characters) {
-      [value, tokens] = appendText(value, tokens);
-      tokens.push({ type: characters[segment], value: segment });
+      tokens.push(
+        { type: TOKEN.LITERAL, value },
+        { type: characters[segment], value: segment }
+      );
+      value = '';
     } else {
       value += segment;
     }
   }
   // add any any trailing characters
-  [value, tokens] = appendText(value, tokens);
+  tokens.push({ type: TOKEN.LITERAL, value });
   return tokens;
 }

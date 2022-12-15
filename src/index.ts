@@ -13,6 +13,8 @@ export function sub(text: string, data: AnyObject = {}, ctx?: Filters): string {
   }
 }
 
-export function subThrows(text: string, data: AnyObject = {}, ctx?: Filters): string {
-  return render(parse(tokenize(text)), data, ctx);
-}
+export default Object.assign(sub, {
+  throwable(text: string, data: AnyObject = {}, ctx?: Filters): string {
+    return render(parse(tokenize(text)), data, ctx);
+  }
+});

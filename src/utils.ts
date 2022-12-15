@@ -33,14 +33,11 @@ export function segmentize(str: string): string[] {
   return Array.from(segmenter.segment(str), s => s.segment);
 }
 
-export function coerceFilterParam(value?: string): string | number | boolean;
-export function coerceFilterParam(
-  value: string | null = null
-): string | number | boolean | null {
+export function coerceFilterParam(value?: string): unknown | null {
   if (typeof value === 'object') {
     return value;
   } else {
-    let res: string | number | boolean | null = value;
+    let res: unknown | null = value;
     // boolean
     res = res === 'true' || res === 'false' ? res === 'true' : res;
     // number

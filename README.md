@@ -2,9 +2,9 @@
 
 A tiny (~2kb), writer-first, minimally-invasive DSL for token substitution in long-form text. You can think of it as a presentation layer for writers working with randomly-generated data. **subwriter** strictly separates the text from the content generation process. By way of constrast, [Tracery](https://github.com/galaxykate/tracery) hybridizes the two.
 
-**subwriter** is designed to be as minimal as possible, and reserves only 5 characters (`[ { | } ]`), with 1 additional character (`=`) reserved within filter declarations. Anything else is fair game as content or as an identifier.
+**subwriter** is designed to be as minimal as possible, and reserves only 5 characters (`[ { | } ]`), with 2 additional characters (`=`, `"`) reserved within filter declarations. Anything else is fair game as content or as an identifier.
 
-Including emojis, because why not.
+...including emojis, because why not.
 
 ## Why?
 
@@ -37,25 +37,73 @@ sub("Isn't that {🦸‍♀️.name}? Is [🦸‍♀️|PRP=false] a superhero?"
 
 ## Features
 
-| Feature            | Example                     | Output       |
-| :----------------- | :-------------------------- | ------------ |
-| Interpolation      | `{name}`                    | World        |
-| Property Access    | `{data.name}`               | Bob          |
-| Filters            | `{data.name\|cap}`          | BOB          |
-| Filters (Params)   | `{data.name\|pre=123}`      | 123Bob       |
-| Filters (Chained)  | `{data.name\|cap\|pre=123}` | 123BOB       |
-| Filter Expressions | `[bobbbbbb!\|cap\|pre=123]` | 123BOBBBBBB! |
-| Nesting            | `[Hello {name}!\|cap]`      | HELLO WORLD! |
-
-Numbers, strings and booleans are passed as such to filters. Both `null` and `undefined` filter args are passed as `undefined` to support default parameters.
-
 Property access, filters, &c., are evaluated left to right.
+
+| Feature                    | Example                       | Output           |
+| :------------------------- | :---------------------------- | ---------------- |
+| Interpolation              | `{name}`                      | World            |
+| Property access            | `{data.name}`                 | Bob              |
+| Filters                    | `{data.name\|cap}`            | BOB              |
+| Filters (literal params)   | `{data.name\|pre=123}`        | 123Bob           |
+| Filters (reference params) | `{🍾} [bottle\|s=🍾] of beer` | 1 bottle of beer |
+| Chained filters            | `{data.name\|cap\|pre=123}`   | 123BOB           |
+| Filter expressions         | `[bobbbbbb!\|cap\|pre=123]`   | 123BOBBBBBB!     |
+| Nested expressions         | `[Hello {name}!\|cap]`        | HELLO WORLD!     |
+
+## Filters vs. accessors
+
+While most filters a) operate on a scalar value and an optional argument and b) return text, filters can _technically_ operate on arbitrary data and return anything—even content to be passed through additional filters. However, this increases your filters' dependency on data structure and introduces more room for runtime errors. `get()`-style accessors on your data
+can be used to the same effect.
+
+```ts
+const ctx = {
+  ageText: person => numberToText(person.age),
+  text: num => numberToText(num)
+};
+
+const data = {
+  name: 'Bob',
+  age: 2,
+  get ageText() {
+    return numberToText(this.age);
+  }
+};
+
+// Bob is two years old; good solution
+sub('{person.name} is {person.age|text} years old.', data, ctx);
+// Bob is two years old; passable solution
+sub('{person.name} is {person.ageText} years old.', data, ctx);
+// Bob is two years old; worst solution
+sub('{person.name} is {person|ageText} years old.', data, ctx);
+```
+
+Because **subwrite** has no understanding of a filter's input, param or return types, it's easy
+to shoot yourself in the face using a filter that expects an object with a specific structure
+instead of a scalar value.
+
+So as a general rule: if you need a param or are applying a general-purpose text operation, use
+a filter. If you don't, an accessor in your data is probably better.
+
+## Filter params
+
+When passed as filter args, numbers and booleans are coerced from strings. Double-quoted strings are passed as literal text.
+
+Unquoted strings are passed as their corresponding value in `data`.
+
+Both `null` and `undefined` values given as params are passed as `undefined` to make default params more useful.
+
+| Example            | Argument value |
+| :----------------- | :------------- |
+| `[foo\|bar=1]`     | `1`            |
+| `[foo\|bar=true]`  | `true`         |
+| `[foo\|bar]`       | `undefined`    |
+| `[foo\|bar=null]`  | `undefined`    |
+| `[foo\|bar="key"]` | `'key'`        |
+| `[foo\|bar=key]`   | `data[key]`    |
 
 ## Non-features
 
-- dynamic properties
-- control flow
-- conditional logic
+- control flow, conditional logic
 - transclusion
 - RNG
 - anything else
@@ -69,7 +117,7 @@ Property access, filters, &c., are evaluated left to right.
 5. When in doubt, _use a filter_.
 
 ```js
-import { sub } from 'subwriter';
+import sub from 'subwriter';
 
 // properties -> "His name is Bob."
 sub(`His name is {name}.`, { name: 'Bob' });
@@ -160,6 +208,6 @@ Which resolves to:
 And the corresponding **subwriter** source, which resolves to the same text (after trimming).
 
 ```
-[Surprise, everyone! It's fightin' time!|leader=🤪]
-[Ahem. Our foes appear to have arrived.|leader=🤓]
+[Surprise, everyone! It's fightin' time!|leader="🤪"]
+[Ahem. Our foes appear to have arrived.|leader="🤓"]
 ```

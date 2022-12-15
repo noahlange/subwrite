@@ -25,7 +25,7 @@ export function parseFilter(
         filters.push(node);
         value = null;
         const [, name] = parseLiteral(++i, tokens);
-        node = { type: 'Filter', name: name.value, value };
+        node = { type: 'Filter', name: name.value.trim(), value };
         break;
       }
       // filter name

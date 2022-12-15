@@ -1,6 +1,6 @@
 {
   "name": "subwriter",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "license": "MIT",
   "repository": "github:noahlange/subwriter",
   "author": "Noah Lange <noahrlange@gmail.com>",
@@ -20,7 +20,7 @@
     "build:cjs": "esbuild src/index.ts --minify --bundle --outfile=lib/subwriter.js --format=cjs",
     "build:types": "tsc",
     "dev:pretty": "prettier --write 'src/**/*.{ts,tsx}'",
-    "dev:types": "tsc --noEmit",
+    "dev:types": "tsc",
     "test": "jest"
   },
   "devDependencies": {
