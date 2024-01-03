@@ -2,13 +2,13 @@ import type { Token, TokenType } from './types';
 import { segmentize } from './utils';
 
 export enum TOKEN {
-  VAR_START = 'VAR_START',
-  VAR_END = 'VAR_END',
-  GROUP_START = 'GROUP_START',
-  GROUP_END = 'GROUP_END',
-  LITERAL = 'LITERAL',
-  FILTER = 'FILTER',
-  PARAM = 'PARAM'
+  VAR_START,
+  VAR_END,
+  GROUP_START,
+  GROUP_END,
+  LITERAL,
+  FILTER,
+  PARAM
 }
 
 export function tokenize(input: string, characters: Record<string, TokenType>): Token[] {

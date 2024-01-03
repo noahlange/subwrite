@@ -1,24 +1,31 @@
 import type { Token } from '../types';
 
+export enum NodeType {
+  LITERAL,
+  GROUP,
+  VAR,
+  FILTER
+}
+
 export interface LiteralNode {
-  type: 'Literal';
+  type: NodeType.LITERAL;
   value: string;
 }
 
 export interface GroupNode {
-  type: 'Group';
+  type: NodeType.GROUP;
   value: ASTNode[];
   filters: FilterNode[];
 }
 
 export interface VarNode {
-  type: 'Var';
+  type: NodeType.VAR;
   name: string;
   filters: FilterNode[];
 }
 
 export interface FilterNode {
-  type: 'Filter';
+  type: NodeType.FILTER;
   name: string;
   value: LiteralNode | null;
 }

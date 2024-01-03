@@ -28,6 +28,7 @@ export function set<T extends AnyObject>(object: T, path: string, value: unknown
 }
 
 const segmenter = new Intl.Segmenter();
+const booleans: unknown[] = ['true', 'false'];
 
 export function segmentize(str: string): string[] {
   return Array.from(segmenter.segment(str), s => s.segment);
@@ -39,7 +40,7 @@ export function coerceFilterParam(value?: string): unknown | null {
   } else {
     let res: unknown | null = value;
     // boolean
-    res = res === 'true' || res === 'false' ? res === 'true' : res;
+    res = booleans.includes(res) ? res === 'true' : res;
     // number
     res = res && !isNaN(+res) ? +res : res;
     return res;

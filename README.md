@@ -1,6 +1,6 @@
 # subwriter
 
-A tiny (~2kb), writer-first, minimally-invasive DSL for token substitution in long-form text. You can think of it as a presentation layer for writers working with randomly-generated data. **subwriter** strictly separates the text from the content generation process. By way of constrast, [Tracery](https://github.com/galaxykate/tracery) hybridizes the two.
+A tiny (~2kb), zero-dependency, writer-first, minimally-invasive DSL for token substitution in long-form text. You can think of it as a presentation layer for writers working with randomly-generated data. **subwriter** strictly separates the text from the content generation process. By way of constrast, [Tracery](https://github.com/galaxykate/tracery) hybridizes the two.
 
 **subwriter** is designed to be as minimal as possible, and reserves only 5 characters (`[ { | } ]`), with 2 additional characters (`=`, `"`) reserved within filter declarations. Anything else is fair game as content or as an identifier.
 

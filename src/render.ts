@@ -1,6 +1,7 @@
 import type { ASTNode, FilterNode } from './parse/types';
 import type { Filters, AnyObject } from './types';
 
+import { NodeType } from './parse/types';
 import { get, coerceFilterParam } from './utils';
 
 function renderFilter(
@@ -25,16 +26,16 @@ export function render(nodes: ASTNode[], data: AnyObject = {}, ctx: Filters = {}
   let result = '';
   for (const node of nodes) {
     switch (node.type) {
-      case 'Literal': {
+      case NodeType.LITERAL: {
         result += node.value;
         break;
       }
-      case 'Group':
-      case 'Var': {
+      case NodeType.GROUP:
+      case NodeType.VAR: {
         result += node.filters
           .reduce(
             (value: unknown, filter) => renderFilter(value, filter, data, ctx),
-            node.type === 'Var'
+            node.type === NodeType.VAR
               ? get(data, node.name) ?? `{${node.name}}`
               : render(node.value, data, ctx)
           )
