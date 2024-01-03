@@ -11,16 +11,7 @@ export enum TOKEN {
   PARAM = 'PARAM'
 }
 
-const characters: Record<string, TokenType> = {
-  '{': TOKEN.VAR_START,
-  '}': TOKEN.VAR_END,
-  '[': TOKEN.GROUP_START,
-  ']': TOKEN.GROUP_END,
-  '=': TOKEN.PARAM,
-  '|': TOKEN.FILTER
-};
-
-export function tokenize(input: string): Token[] {
+export function tokenize(input: string, characters: Record<string, TokenType>): Token[] {
   // use Intl's Segmenter to avoid UTF problems
   let [value, tokens]: [string, Token[]] = ['', []];
   for (const segment of segmentize(input)) {

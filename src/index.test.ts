@@ -1,5 +1,6 @@
-import { describe, expect, test } from '@jest/globals';
-import sub from './index';
+import { describe, test } from 'node:test';
+import { equal, throws, doesNotThrow } from 'node:assert';
+import sub, { configure } from './index';
 
 class Person {
   public gender = 'M';
@@ -18,7 +19,7 @@ describe('basic interpolation', () => {
     ];
 
     for (const line of text) {
-      expect(sub(line)).toBe(line);
+      equal(sub(line), line);
     }
   });
 
@@ -28,12 +29,12 @@ describe('basic interpolation', () => {
       after: 'I am so sad. I am so very, very sad.',
       data: { mood: 'sad' }
     };
-    expect(sub(text.before, text.data)).toBe(text.after);
+    equal(sub(text.before, text.data), text.after);
   });
 
   test('falls back to property name', () => {
     const text = 'I am so {mood}. I am so very, very {mood}.';
-    expect(sub(text, {})).toBe(text);
+    equal(sub(text, {}), text);
   });
 
   test('interpolates nested properties', () => {
@@ -42,7 +43,7 @@ describe('basic interpolation', () => {
       after: 'His name is Bobby Bobbertson.',
       data: { person: { name: 'Bobby Bobbertson' } }
     };
-    expect(sub(text.before, text.data)).toBe(text.after);
+    equal(sub(text.before, text.data), text.after);
   });
 
   test('interpolates getters', () => {
@@ -55,7 +56,7 @@ describe('basic interpolation', () => {
         }
       }
     };
-    expect(sub(text.before, text.data)).toBe(text.after);
+    equal(sub(text.before, text.data), text.after);
   });
 
   test('interpolates mix of nested, non-nested properties and accessors.', () => {
@@ -74,7 +75,7 @@ describe('basic interpolation', () => {
       }
     };
 
-    expect(sub(ctx.before, ctx.data)).toBe(ctx.after);
+    equal(sub(ctx.before, ctx.data), ctx.after);
   });
 });
 
@@ -92,7 +93,7 @@ describe('filters', () => {
       }
     };
 
-    expect(sub(ctx.before, ctx.data, ctx.filters)).toBe(ctx.after);
+    equal(sub(ctx.before, ctx.data, ctx.filters), ctx.after);
   });
 
   test('can chain filters', () => {
@@ -106,7 +107,7 @@ describe('filters', () => {
       }
     };
 
-    expect(sub(ctx.before, ctx.data, ctx.filters)).toBe(ctx.after);
+    equal(sub(ctx.before, ctx.data, ctx.filters), ctx.after);
   });
 
   test('can apply filters to objects', () => {
@@ -120,7 +121,7 @@ describe('filters', () => {
       }
     };
 
-    expect(sub(ctx.before, ctx.data, ctx.filters)).toBe(ctx.after);
+    equal(sub(ctx.before, ctx.data, ctx.filters), ctx.after);
   });
 
   test('can apply filters to literal text', () => {
@@ -137,7 +138,7 @@ describe('filters', () => {
       }
     };
 
-    expect(sub(ctx.before, ctx.data, ctx.filters)).toBe(ctx.after);
+    equal(sub(ctx.before, ctx.data, ctx.filters), ctx.after);
   });
 });
 
@@ -153,7 +154,7 @@ describe('groups', () => {
         cap: (str: string) => str.toUpperCase()
       }
     };
-    expect(sub(ctx.before, ctx.data, ctx.filters)).toBe(ctx.after);
+    equal(sub(ctx.before, ctx.data, ctx.filters), ctx.after);
   });
 
   test('can nest groups', () => {
@@ -171,7 +172,7 @@ describe('groups', () => {
         leader: (text: string, leader: string) => (leader === LEADER ? text : '')
       }
     };
-    expect(sub(ctx.before, {}, ctx.filters)).toBe(ctx.after);
+    equal(sub(ctx.before, {}, ctx.filters), ctx.after);
   });
 });
 
@@ -210,7 +211,7 @@ describe('emojis', () => {
       }
     };
     for (const text of ctx.text) {
-      expect(sub(text.before, ctx.data, ctx.filters)).toBe(text.after);
+      equal(sub(text.before, ctx.data, ctx.filters), text.after);
     }
   });
 
@@ -227,7 +228,7 @@ describe('emojis', () => {
       }
     };
 
-    expect(sub(ctx.before, ctx.data, ctx.filters)).toBe(ctx.after);
+    equal(sub(ctx.before, ctx.data, ctx.filters), ctx.after);
   });
 
   test('scalar filter params are coerced', () => {
@@ -243,7 +244,8 @@ describe('emojis', () => {
       }
     };
 
-    expect(sub("Isn't that {🦸‍♀️.name}? Is [🦸‍♀️|PRP=false] a superhero?", data, ctx)).toBe(
+    equal(
+      sub("Isn't that {🦸‍♀️.name}? Is [🦸‍♀️|PRP=false] a superhero?", data, ctx),
       "Isn't that Sally? Is she a superhero?"
     );
   });
@@ -259,20 +261,30 @@ describe('emojis', () => {
       after: '10 bottles of beer on the wall.'
     };
 
-    expect(sub(text.before, data, ctx)).toBe(text.after);
+    equal(sub(text.before, data, ctx), text.after);
   });
 });
 
 describe('errors', () => {
+  const _ = configure({ throws: true });
+
   test('returns an empty string on failure.', () => {
     // silence error
     const _error = console.error;
     console.error = () => void 0;
-    expect(() => sub('|||')).not.toThrow();
+    doesNotThrow(() => sub('|||'));
     console.error = _error.bind(console);
   });
 
   test('subThrow throws on error.', () => {
-    expect(() => sub.throwable('|||')).toThrow();
+    throws(() => _('|||'));
+  });
+});
+
+describe('tokens', () => {
+  const _ = configure({ tokens: '«»‹›|=' });
+  test('can be customized', () => {
+    const res = _('‹«foo»|uc›', { foo: 'bar' }, { uc: s => s.toUpperCase() });
+    equal(res, 'BAR');
   });
 });

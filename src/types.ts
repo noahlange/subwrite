@@ -11,8 +11,8 @@ export interface FilterFunction {
 
 export type TokenType = typeof TOKEN[keyof typeof TOKEN];
 
-export type AnyObject = Record<string, unknown>;
+export type AnyObject = { [key: string | number | symbol]: unknown };
 
 export interface Filters {
-  [key: string]: FilterFunction;
+  [key: string | number | symbol]: FilterFunction;
 }

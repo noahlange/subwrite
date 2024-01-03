@@ -1,10 +1,4 @@
 {
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS",
-      "moduleResolution": "node"
-    }
-  },
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "lib",
@@ -18,10 +12,9 @@
     "forceConsistentCasingInFileNames": true,
     "emitDeclarationOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
+    "module": "ESNext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "importsNotUsedAsValues": "error",
     "isolatedModules": true
   },
   "exclude": [".ignore", "lib"]

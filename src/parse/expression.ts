@@ -11,13 +11,11 @@ export function parseExpression(i: number, tokens: Token[]): ParseResult<ASTNode
   const isVarNode = tokens[i].type === TOKEN.VAR_START;
   const end = isVarNode ? TOKEN.VAR_END : TOKEN.GROUP_END;
 
-  const node = (
-    isVarNode
-      ? // if we're parsing {blah}, 'blah' is token i+1. get the name and move on.
-        { type: 'Var', name: tokens[++i].value, filters: [] }
-      : // otherwise, we're about to start a nested parse.
-        { type: 'Group', value: [], filters: [] }
-  ) as VarNode | GroupNode;
+  const node: VarNode | GroupNode = isVarNode
+    ? // if we're parsing {blah}, 'blah' is token i+1. get the name and move on.
+      { type: 'Var', name: tokens[++i].value, filters: [] }
+    : // otherwise, we're about to start a nested parse.
+      { type: 'Group', value: [], filters: [] };
 
   // if this is a group, we've advanced to at the opening bracket (i); if a var we're at i+1
   // (i.e., the name).

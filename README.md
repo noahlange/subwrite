@@ -4,7 +4,7 @@ A tiny (~2kb), writer-first, minimally-invasive DSL for token substitution in lo
 
 **subwriter** is designed to be as minimal as possible, and reserves only 5 characters (`[ { | } ]`), with 2 additional characters (`=`, `"`) reserved within filter declarations. Anything else is fair game as content or as an identifier.
 
-...including emojis, because why not.
+&hellip;including emojis, because why not?
 
 ## Why?
 
@@ -23,15 +23,20 @@ const data = {
   '🦸‍♀️': { name: 'Sally' }
 };
 
-const ctx = {
-  // filters are functions that take source text and an optional param.
-  PRP: (glyph, caps = true) => {
-    const res = [...glyph].includes('♀') ? 'she' : 'he';
-    return caps ? res.toLocaleString() : res;
-  }
+const PRP = (glyph, caps = false) => {
+  const res = [...glyph].includes('♀') ? 'she' : 'he';
+  return caps ? res[0].toUpperCase() + res.slice(1) : res;
 };
 
-sub("Isn't that {🦸‍♀️.name}? Is [🦸‍♀️|PRP=false] a superhero?", data, ctx);
+const ctx = {
+  // filters are functions that take source text and an optional param.
+  he: PRP,
+  she: PRP,
+  He: text => PRP(text, true),
+  She: text => PRP(text, true)
+};
+
+sub("Isn't that {🦸‍♀️.name}? Is [🦸‍♀️|PRP] a superhero?", data, ctx);
 // Isn't that Sally? Is she a superhero?
 ```
 
@@ -117,7 +122,12 @@ Both `null` and `undefined` values given as params are passed as `undefined` to 
 5. When in doubt, _use a filter_.
 
 ```js
-import sub from 'subwriter';
+import { configure } from 'subwriter';
+
+const sub = configure({
+  tokens: '{}[]|=', // custom tokens (variable start/end, group start/end, filter, param)
+  throws: true // throw on syntax errors
+});
 
 // properties -> "His name is Bob."
 sub(`His name is {name}.`, { name: 'Bob' });
@@ -210,4 +220,18 @@ And the corresponding **subwriter** source, which resolves to the same text (aft
 ```
 [Surprise, everyone! It's fightin' time!|leader="🤪"]
 [Ahem. Our foes appear to have arrived.|leader="🤓"]
+```
+
+## Notes
+
+### Use with yarn-bound
+
+Text written with **subwriter** is partially compatible with content navigated using Yarn. Escape braces and brackets with a starting `\` and everything should work as expected. Alternatively, you can set a custom token set by creating a custom Subwriter instance. (I prefer `«` and `»` for interpolation, since `alt+\` and `alt+shift+\`. are reasonably accessible on MacOS by keyboard.)
+
+```ts
+import { Subwriter } from 'subwriter';
+
+const { _ } = new Subwriter({ tokens: '«»‹›|=' });
+
+_("Isn't that «player.name»?");
 ```

@@ -17,6 +17,6 @@ export function parseToken(current: number, tokens: Token[]): ParseResult<ASTNod
   if (parse !== null) {
     return parse(current, tokens);
   } else {
-    throw new TypeError(`${type.toString()} ${value}`);
+    throw new SyntaxError(`Failed to parse token ${type.toString()} with value "${value}."`);
   }
 }
